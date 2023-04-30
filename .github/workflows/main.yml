@@ -19,3 +19,22 @@ jobs:
         run: |
           mkdir -p ./publish/
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./data-lite/google.txt
+
+      - name: Delete current release assets
+        uses: andreaswilli/delete-release-assets-action@v2.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
+          deleteOnlyFromDrafts: false
+
+      - name: Release and upload assets
+        uses: softprops/action-gh-release@v0.1.6
+        with:
+          name: latest
+          tag_name: latest
+          draft: false
+          prerelease: false
+          files: |
+            ./publish/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
