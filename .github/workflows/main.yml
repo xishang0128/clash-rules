@@ -1,0 +1,77 @@
+name: rule files
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 22 * * *"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/README.md"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: clash classical to clash domain text
+        env:
+          NO_SKIP: true
+          SED: grep DOMAIN | grep -v "#" | grep -v DOMAIN-KEYWORD | sed 's/  - DOMAIN,//g' | sed 's/  - DOMAIN-SUFFIX,/+./g'
+        run: |
+          mkdir -p ./publish/
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/google_domain.txt
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_domain.txt
+
+      - name: clash classical to clash ipcidr text
+        env:
+          NO_SKIP: true
+          SED: grep IP | grep -v "#" | sed 's/  - IP-CIDR\(6\)\?,//g'
+        run: |
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/google_ip.txt
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_ip.txt
+
+      - name: sed surge domain text rule
+        env:
+          NO_SKIP: true
+          SED: sed 's/^\./+./g'
+        run: |
+          curl -sSL https://anti-ad.net/surge2.txt | ${{ env.SED }} > ./publish/ad_domain.txt
+
+
+
+
+
+
+      - name: Git push assets to "release" branch
+        run: |
+          cd publish || exit 1
+          mkdir -p ip && mkdir -p domain
+          mv *ip.txt ip/ && mv *domain.txt domain/ 
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          ls
+          git add -A
+          git commit -m "$(date +%Y%m%d%H%M)"
+          git remote add clash-text "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f -u clash-text release
+          
+      - name: Delete current release assets
+        uses: andreaswilli/delete-release-assets-action@v2.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
+          deleteOnlyFromDrafts: false
+
+      - name: Release and upload assets
+        uses: softprops/action-gh-release@v1
+        with:
+          name: latest
+          tag_name: latest
+          draft: false
+          prerelease: false
+          files: |
+            ./publish/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
