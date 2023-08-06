@@ -24,6 +24,7 @@ jobs:
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/GitHub/GitHub.yaml | ${{ env.SED }} > ./publish/github_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Twitter/Twitter.yaml | ${{ env.SED }} > ./publish/twitter_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/YouTube/YouTube.yaml | ${{ env.SED }} > ./publish/youtube_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ProxyLite/ProxyLite.yaml | ${{ env.SED }} > ./publish/proxy_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Telegram/Telegram.yaml | ${{ env.SED }} > ./publish/telegram_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BiliBili/BiliBili.yaml | ${{ env.SED }} > ./publish/bilibili_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_${{ env.type }}.list
