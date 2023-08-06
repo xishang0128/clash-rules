@@ -20,9 +20,12 @@ jobs:
           type: domain
         run: |
           mkdir -p ./publish/
-          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/google_${{ env.type }}.txt
-          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BiliBili/BiliBili.yaml | ${{ env.SED }} > ./publish/bilibili_${{ env.type }}.txt
-          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_${{ env.type }}.txt
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/google_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/GitHub/GitHub.yaml | ${{ env.SED }} > ./publish/github_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/YouTube/YouTube.yaml | ${{ env.SED }} > ./publish/youtube_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Telegram/Telegram.yaml | ${{ env.SED }} > ./publish/telegram_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BiliBili/BiliBili.yaml | ${{ env.SED }} > ./publish/bilibili_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_${{ env.type }}.list
           
 
       - name: clash classical to clash ipcidr text
@@ -31,18 +34,26 @@ jobs:
           SED: grep IP | grep -v "#" | sed 's/  - IP-CIDR\(6\)\?,//g'
           type: ip
         run: |
-          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/google_${{ env.type }}.txt
-          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BiliBili/BiliBili.yaml | ${{ env.SED }} > ./publish/bilibili_${{ env.type }}.txt
-          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_${{ env.type }}.txt
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/google_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/YouTube/YouTube.yaml | ${{ env.SED }} > ./publish/youtube_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Telegram/Telegram.yaml | ${{ env.SED }} > ./publish/telegram_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BiliBili/BiliBili.yaml | ${{ env.SED }} > ./publish/bilibili_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/cn_${{ env.type }}.list
 
       - name: surge domain text to clash domain text
         env:
           NO_SKIP: true
           SED: sed 's/^\./+./g'
         run: |
-          curl -sSL https://anti-ad.net/surge2.txt | ${{ env.SED }} > ./publish/ad_domain.txt
+          curl -sSL https://anti-ad.net/surge2.list | ${{ env.SED }} > ./publish/ad_domain.list
 
-
+      - name: v2ray domain list to clash domain text
+        env:
+          NO_SKIP: true
+          SED: grep "." | grep -v "#" | sed 's/^/+./g' | sed 's/+.full://g'
+        run: |
+          curl -sSL https://github.com/xishang0128/rules/raw/main/biliintl.list | ${{ env.SED }} > ./publish/biliintl_domain.list
+          curl -sSL https://github.com/v2fly/domain-list-community/raw/master/data/openai | ${{ env.SED }} > ./publish/openai_domain.list
 
 
 
@@ -72,7 +83,7 @@ jobs:
         run: |
           cd publish || exit 1
           mkdir -p ip && mkdir -p domain
-          mv *ip.txt ip/ && mv *domain.txt domain/ 
+          mv *ip.list ip/ && mv *domain.list domain/ 
           git init
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
