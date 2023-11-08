@@ -58,7 +58,21 @@ jobs:
           curl -sSL https://github.com/xishang0128/rules/raw/main/biliintl.list | ${{ env.SED }} > ./publish/biliintl_domain.list
           curl -sSL https://github.com/v2fly/domain-list-community/raw/master/data/openai | ${{ env.SED }} > ./publish/openai_domain.list
 
-
+      - name: clash classical to surge domain-set
+        env:
+          NO_SKIP: true
+          SED: grep DOMAIN | grep -v "#" | grep -v DOMAIN-KEYWORD | sed 's/  - DOMAIN,//g' | sed 's/  - DOMAIN-SUFFIX,/./g'
+          type: domain
+        run: |
+          mkdir -p ./publish/
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/surge/google_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/GitHub/GitHub.yaml | ${{ env.SED }} > ./publish/surge/github_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Twitter/Twitter.yaml | ${{ env.SED }} > ./publish/surge/twitter_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/YouTube/YouTube.yaml | ${{ env.SED }} > ./publish/surge/youtube_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ProxyLite/ProxyLite.yaml | ${{ env.SED }} > ./publish/surge/proxy_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Telegram/Telegram.yaml | ${{ env.SED }} > ./publish/surge/telegram_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/BiliBili/BiliBili.yaml | ${{ env.SED }} > ./publish/surge/bilibili_${{ env.type }}.list
+          curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/ChinaMax/ChinaMax_Classical.yaml | ${{ env.SED }} > ./publish/surge/cn_${{ env.type }}.list
 
 
 
