@@ -64,7 +64,7 @@ jobs:
           SED: grep DOMAIN | grep -v "#" | grep -v DOMAIN-KEYWORD | sed 's/  - DOMAIN,//g' | sed 's/  - DOMAIN-SUFFIX,/./g'
           type: domain
         run: |
-          mkdir -p ./publish/
+          mkdir -p ./publish/surge
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Google/Google.yaml | ${{ env.SED }} > ./publish/surge/google_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/GitHub/GitHub.yaml | ${{ env.SED }} > ./publish/surge/github_${{ env.type }}.list
           curl -sSL https://github.com/blackmatrix7/ios_rule_script/raw/master/rule/Clash/Twitter/Twitter.yaml | ${{ env.SED }} > ./publish/surge/twitter_${{ env.type }}.list
